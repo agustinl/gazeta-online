@@ -2,6 +2,8 @@
 
 📰 Free and simple personal RSS reader
 
+[https://gazeta-online.now.sh/](https://gazeta-online.now.sh/)
+
 ## Author
 
 [Agustínl](https://www.agustinl.dev/)
