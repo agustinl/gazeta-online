@@ -1,65 +1,50 @@
 <script>
-    import { onMount } from 'svelte';
+export let RSSsites;
+export let sitesList;
+export let maxNewsToShow;
 
-    export let listOfRSSsites;
+$: arr_new_feed = [];
+
+function setNewFeeds() {
+    if(sitesList == "" || sitesList == null) { return }
+
+    sitesList = sitesList.toString();
     
-    $: arr_new_feed = [];
-    let sitesList = "";
-    let numberOfNewsToShow = 1;
+    var arr_tmp_feed = new Array();
+        arr_tmp_feed = sitesList.split(",");
 
-    onMount(async () => {
-        sitesList = getCookie('gazeta_online');
+    arr_new_feed.push(maxNewsToShow);
 
-        if(sitesList == null) { return }
-
-        numberOfNewsToShow = sitesList.shift(); /* Get the number stored in first position of array */
-        sitesList = sitesList;
+    arr_tmp_feed.forEach(site => {
+        site = site.indexOf("http") < 0 ? "http://" + site : site;
+        arr_new_feed.push(site);
     })
 
-    function setNewFeeds() {
-        if(sitesList == "" || sitesList == null) { return }
-        
-        var arr_tmp_feed = new Array();
-            arr_tmp_feed = sitesList.split(",");
+    arr_new_feed = arr_new_feed;
 
-        arr_new_feed.push(numberOfNewsToShow);
+    setCookie('gazeta_online', arr_new_feed);
+}
 
-        arr_tmp_feed.forEach(site => {
-            site = site.indexOf("http") < 0 ? "http://" + site : site;
-
-            arr_new_feed.push(site);
-        })
-
-        arr_new_feed = arr_new_feed;
-
-        setCookie('gazeta_online', arr_new_feed);
-    }
-
-    function setCookie(key, value) {
-        var expires = new Date();
-        expires.setTime(expires.getTime() + (10 * 365 * 24 * 60 * 60));
-        document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-        location.reload();
-    }
-
-	function getCookie(key) {
-		var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-		return keyValue ? keyValue[2].split(",") : null;
-	}
+function setCookie(key, value) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + (10 * 365 * 24 * 60 * 60));
+    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+    location.reload();
+}
 </script>
 
 <div id="new-feed">
     <div>
         <textarea name="newfeed" id="newfeed" bind:value={sitesList} placeholder="Put your favorite websites separated by a comma (eg. https://www.theverge.com/, https://www.wired.com/)"></textarea>
         <div>
-            <p>I want to see <input type="number" id="news-amount" name="news-amount" bind:value={numberOfNewsToShow} min="1" max="100"> news per feed</p>
+            <p>I want to see <input type="number" id="news-amount" name="news-amount" bind:value={maxNewsToShow} min="1" max="100"> news per feed</p>
             <button on:click={setNewFeeds}>New Feed!</button>
         </div>
     </div>
-    {#if listOfRSSsites != ""}
+    {#if RSSsites != ""}
     <div>
         <ul class="feeds-list">
-            {#each listOfRSSsites as site}
+            {#each RSSsites as site}
                 {#if site.status == "error"}
                     <li class={site.status}>
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

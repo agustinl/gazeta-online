@@ -28,7 +28,7 @@ a:hover {
     color:#F03009;
 }
 
-header h1 {
+#feed > header h1 {
     text-align:center;
     font-weight: 700;
     font-size: 4rem;
@@ -87,14 +87,14 @@ header h1 {
     overflow:hidden;
 }
 
-article {
+.feed > article {
     border: solid 1px var(--main-txt-color);
     border-bottom: solid 2px var(--main-txt-color);
     padding: 20px 10px;
     margin-bottom: var(--margin-btm);
 }
 
-article h3 {
+.feed > article h3 {
     margin: 0;
 }
 
@@ -151,7 +151,7 @@ article iframe {
     overflow-y:auto;
 }
 
-article time {
+.feed > article time {
     font-size: .9em;
     color: #868686;
 }
@@ -184,11 +184,13 @@ article time {
 }
 
 #news-amount {
+    font: 15px/22px 'Inter', system-ui, sans-serif;
     padding: 5px;
     border: none;
     border-bottom: solid 2px var(--main-txt-color);
     background:transparent;
     text-align:center;
+    width: 60px;
 }
 
 #new-feed .feeds-list {
@@ -199,6 +201,7 @@ article time {
     display:flex;
     list-style:none;
     font-size:.9em;
+    word-break: break-all;
 }
 
 #new-feed .feeds-list li.error,
@@ -301,8 +304,17 @@ footer h5 {
 }
 
 @media only screen and (max-width: 590px) {
-    header h1 {
+    #feed > header h1 {
         font-size:3em;
+    }
+
+    #new-feed div:first-child > div {
+        flex-direction:column;
+        align-items:flex-start;
+    }
+    
+    button {
+        margin-top:20px;
     }
 
     .feeds > section {
