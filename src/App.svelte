@@ -45,17 +45,15 @@ onMount(async () => {
 })
 
 afterUpdate(async () => {
-	const sites = await cookiesSites;
-	if(sites == null || sites == "") { return }
-
-	const grid = document.querySelector('.feeds')
-	const msnry = new Masonry(grid, {
-		itemSelector: '.feed'
-	})
-	msnry.once('layoutComplete', () => {
-		grid.classList.add('load')
-	})
-	msnry.layout();
+	window.addEventListener("DOMSubtreeModified", function () {
+		var elem = document.querySelector('.feeds');
+		if (elem) {
+			var msnry = new Masonry(elem, {
+				// options
+				itemSelector: '.feed'
+			});
+		}
+	});	
 })
 
 async function getRSS(site) {

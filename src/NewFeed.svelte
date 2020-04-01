@@ -15,8 +15,10 @@ function setNewFeeds() {
 
     arr_new_feed.push(maxNewsToShow);
 
-    arr_tmp_feed.forEach(site => {
-        site = site.indexOf("http") < 0 ? "http://" + site : site;
+    arr_tmp_feed.forEach(site => { 
+        if(!site.startsWith("https://")) {
+            site = site.startsWith("http") ? site.replace("http", "https") : "https://" + site
+        }
         arr_new_feed.push(site);
     })
 
@@ -68,6 +70,6 @@ function setCookie(key, value) {
 </div>
 
 <footer>
-    <h4>by <a href="https://agustinl.dev/" target="_blank" rel="noopener">agustínl</a></h4>
+    <h4>by <a href="https://agustinl.dev/" target="_blank" rel="noopener">agustínl</a> — <a href="https://github.com/agustinl/gazeta-online" target="_blank" rel="noopener">GitHub</a></h4>
     <h5>Font by <a href="https://rsms.me/inter/" target="_blank" rel="noopener">@rsms</a>, Icons by <a href="https://github.com/tabler/tabler-icons" target="_blank" rel="noopener">tabler-icons</a> and Ilustration by <a href="https://undraw.co/" target="_blank" rel="noopener">unDraw</a></h5>
 </footer>
