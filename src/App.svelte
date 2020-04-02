@@ -41,7 +41,9 @@ onMount(async () => {
 			rssListStatus("sucess", rss_site);
 		}
 		feeds = feeds;
-		if (feeds == "") catch_error = true
+
+		// Fix issue https://github.com/agustinl/gazeta-online/issues/2
+		if (feeds == "") catch_error = true;
 	})();
 	
 })
@@ -175,7 +177,7 @@ async function getFeed(rss_site, max_news_to_show) {
 		return articles;
 	} catch (error) {
 		rssListStatus("error", rss_site);
-		throw "Type 2 ++ " + error;
+		/*throw "Type 2 ++ " + error;*/
 	}
 }
 
