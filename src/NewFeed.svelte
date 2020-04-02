@@ -38,13 +38,7 @@ function setCookie(key, value) {
 <div id="new-feed">
     <div>
         <textarea name="newfeed" id="newfeed" bind:value={sitesList} placeholder="Put your favorite websites separated by a comma (eg. https://www.theverge.com/, https://www.wired.com/)"></textarea>
-        <div>
-            <p>I want to see <input type="number" id="news-amount" name="news-amount" bind:value={maxNewsToShow} min="1" max="100"> news per feed</p>
-            <button on:click={setNewFeeds}>New Feed!</button>
-        </div>
-    </div>
-    {#if RSSsites != ""}
-    <div>
+        {#if RSSsites != ""}
         <ul class="feeds-list">
             {#each RSSsites as site}
                 {#if site.status == "error"}
@@ -65,8 +59,12 @@ function setCookie(key, value) {
                 {/if}
             {/each}
         </ul>
-    </div>
-    {/if}
+        {/if}
+        <div>
+            <p>I want to see <input type="number" id="news-amount" name="news-amount" bind:value={maxNewsToShow} min="1" max="100"> news per feed</p>
+            <button on:click={setNewFeeds}>New Feed!</button>
+        </div>
+    </div>    
 </div>
 
 <footer>

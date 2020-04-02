@@ -8,38 +8,40 @@ import Masonry from 'masonry-layout'
 const DOMPARSER = new DOMParser().parseFromString.bind(new DOMParser());
 
 $: feeds = [];
-let RSSsites = [];
-let sitesList;
-let maxNewsToShow = 1;
+$: catch_error = false;
+let rss_sites = [];
+let sites_list;
+let max_news_to_show = 1;
 let message = "Loading news feed...";
 
-const cookiesSites = (async () => {
+const sites_cookies = (async () => {
 	const sites = await getCookie('gazeta_online');
     return await sites;
 })()
 
 onMount(async () => {
-	const sites = await cookiesSites;
+	const sites = await sites_cookies;
+	
+	// If no sites...
 	if(sites == null) {
 		message = "There is no site loaded yet. Put your favorite news sites below.";
-		return
-	}
+		return;
+	};
 
-	maxNewsToShow = sites.shift();
-	sitesList = sites;
+	// If sites
+	max_news_to_show = sites.shift(); // remove and set first array item (n° news per feed)
+	sites_list = sites; // array without first item
 
 	(async function() {
 		for await (let site of sites) {
-			const RSSsite = await getRSS(site);
-			if (RSSsite == undefined) {
-				setRSSList("error", site);
-				continue
-			;}
-			const feed = await getFeed(RSSsite, maxNewsToShow)
+			const rss_site = await getRSS(site);
+			if (rss_site == undefined) continue // If no rss_site, jump to next site
+			const feed = await getFeed(rss_site, max_news_to_show);
 			feeds.push(feed);
-			setRSSList("sucess", RSSsite);
+			rssListStatus("sucess", rss_site);
 		}
 		feeds = feeds;
+		if (feeds == "") catch_error = true
 	})();
 	
 })
@@ -58,69 +60,71 @@ afterUpdate(async () => {
 
 async function getRSS(site) {
 	try {
-		var RSSsite;
+		var rss_site;
 			
 		if (site.includes("rss") || site.includes("feed")) {			
-			RSSsite = site;
+			rss_site = site;
 		} else if (site.includes("reddit.com/")) {
-			RSSsite = site + ".rss";
+			rss_site = site + ".rss";
 		} else {
 			site = !site.endsWith("/") ? site + "/" : site;
-			let response = await fetch(site);
-			let reshtml = await response.text();
-			let doc = DOMPARSER(reshtml, 'text/html')
-				
-			if (doc.querySelector('link[type="application/rss+xml"]') == null) return
+			let reshtml = await fetchSites(site);
+
+			// If site not exist, or invalid domain, or 404
+			if (reshtml == undefined) return;
+
+			let doc = DOMPARSER(reshtml, 'text/html');
+
+			// If not have rss link tag
+			if (doc.querySelector('link[type="application/rss+xml"]') == null) {
+				rssListStatus("error", site);
+				return undefined;
+			}
 				
 			var link = doc.querySelector('link[type="application/rss+xml"]').href;
-			RSSsite = link.split(location.origin + "/");
-			RSSsite = RSSsite.length == 1 ? RSSsite[0] : site + RSSsite[1];
+			rss_site = link.split(location.origin + "/");
+			rss_site = rss_site.length == 1 ? rss_site[0] : site + rss_site[1];
 		}
 
-		return RSSsite;
+		return rss_site;
 	} catch (error) {
-		setRSSList("error", site);
-		throw "Type 1 ++ " + error;
+		rssListStatus("error", site);
+		/*throw "Type 1 ++ " + error;*/
 	}
 }
 
-async function getFeed(RSSsite, maxNewsToShow) {
+async function getFeed(rss_site, max_news_to_show) {
 	try {
 		var date = new Date().getFullYear();
 		var articles = [];
-		var feeddescription = "";
+		var feed_description = "";
 		var feedicon = "";
-		let reshtml = await fetch(RSSsite)
-			.then(function(response) {
-				if (response.status != 404) {
-					return response.text();
-				}
-			})
+		let reshtml = await fetchSites(rss_site);
 		let doc = DOMPARSER(reshtml, "text/xml");		
 		let nodes = doc.querySelectorAll('item').length == 0 ? doc.querySelectorAll('entry') : doc.querySelectorAll('item');
-		let feedtitle = doc.querySelector('title').textContent;
-		let feedlink = doc.querySelector('link').textContent == "" ? doc.querySelector('link').getAttribute("href") : doc.querySelector('link').textContent;
+		let feed_title = doc.querySelector('title').textContent;
+		let feed_link = doc.querySelector('link').textContent == "" ? doc.querySelector('link').getAttribute("href") : doc.querySelector('link').textContent;
 			
 		if (doc.querySelector('description') != null) {
-			feeddescription = doc.querySelector('description').textContent
+			feed_description = doc.querySelector('description').textContent
 		} else if (doc.querySelector('subtitle')) {
-			feeddescription = doc.querySelector('subtitle').textContent
+			feed_description = doc.querySelector('subtitle').textContent
 		}		
 
-		articles.push(feedtitle);
-		articles.push(feeddescription);
-		articles.push(feedlink);
+		articles.push(feed_title);
+		articles.push(feed_description);
+		articles.push(feed_link);
 
-		let newsLength = maxNewsToShow > nodes.length ? nodes.length : maxNewsToShow;
+		let news_length = max_news_to_show > nodes.length ? nodes.length : max_news_to_show;
 
-		for (var x = 0; x < newsLength; x++) {
+		for (var x = 0; x < news_length; x++) {
 				
 			var j;
 			var title = "";
 			var description = "";
 			var pubdate = "";
 			var categories = [];
-			let sourcelink = RSSsite;
+			let sourcelink = rss_site;
 			var link = nodes[x].querySelector('link').textContent == "" ? nodes[x].querySelector('link').getAttribute("href") : nodes[x].querySelector('link').textContent;
 
 			// If exist, set title
@@ -170,9 +174,27 @@ async function getFeed(RSSsite, maxNewsToShow) {
 
 		return articles;
 	} catch (error) {
-		setRSSList("error", RSSsite);
+		rssListStatus("error", rss_site);
 		throw "Type 2 ++ " + error;
 	}
+}
+
+async function fetchSites(site) {
+
+	const response = await fetch(site).then(function(response) {
+		if (response.ok) {
+			return response.text()
+		} else {
+		console.log('Fetch problem with ' + site + " :: " + response.status);	
+		}
+	})
+	.catch(function(error) {
+		console.log('Fetch problem with ' + site + " :: " + error.message);		
+		rssListStatus("error", site);
+	})
+
+	return response;
+
 }
 
 function getCookie(key) {
@@ -180,12 +202,12 @@ function getCookie(key) {
 	return keyValue ? keyValue[2].split(",") : null;
 }
 
-function setRSSList(status, site) {
-	RSSsites.push({
+function rssListStatus(status, site) {
+	rss_sites.push({
 		status: status,
 		rss: site
 	})
-	RSSsites = RSSsites;
+	rss_sites = rss_sites;
 }
 </script>
 
@@ -193,11 +215,14 @@ function setRSSList(status, site) {
 	
 	<Header />
 
-	{#await cookiesSites}
+	{#await sites_cookies}
 		<img src="img/undraw_newspaper_k72w.svg" alt="" style="width: 300px;margin: 0 auto;display: block;">
 		<h2 class="feed-message">{message}</h2>
 	{:then sites}
-		{#if feeds != ""}
+		{#if catch_error}
+			<img src="img/undraw_QA_engineers_dg5p.svg" alt="" style="width: 300px;margin: 0 auto 20px;display: block;">
+			<h2 class="feed-message">Ups!, an error occurred, try again in a few minutes</h2>
+		{:else if feeds != ""}
 			<div class="feeds">
 			{#each feeds as feed}
 				<section class="feed">
@@ -209,7 +234,7 @@ function setRSSList(status, site) {
 			<img src="img/undraw_newspaper_k72w.svg" alt="" style="width: 300px;margin: 0 auto;display: block;">
 			<h2 class="feed-message">{message}</h2>
 		{/if}
-		<NewFeed sitesList={sitesList} RSSsites={RSSsites} maxNewsToShow={maxNewsToShow} />
+		<NewFeed sitesList={sites_list} RSSsites={rss_sites} maxNewsToShow={max_news_to_show} />
 	{:catch error}
 		<img src="img/undraw_QA_engineers_dg5p.svg" alt="" style="width: 300px;margin: 0 auto 20px;display: block;">
 		<h2 class="feed-message">Ups!, an error occurred, try again in a few minutes</h2>
