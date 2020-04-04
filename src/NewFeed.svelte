@@ -3,35 +3,102 @@ export let RSSsites;
 export let sitesList;
 export let maxNewsToShow;
 
-$: arr_new_feed = [];
+const DOMPARSER = new DOMParser().parseFromString.bind(new DOMParser());
 
-function setNewFeeds() {
+let store_sites;
+let arr_tmp_rss = [];
+
+/**
+ * If textarea not empty, convert text to string
+ * Then divide it by comma
+ * Validate if sites included in array contains "https"
+ * @getRss Get RSS link
+ * Save in localStorage
+ */
+async function setNewFeeds() {
+	
     if(sitesList == "" || sitesList == null) { return }
 
-    sitesList = sitesList.toString();
-    
-    var arr_tmp_feed = new Array();
-        arr_tmp_feed = sitesList.split(",");
+    var tmp_sites = sitesList.toString();
+    var arr_tmp_sites = new Array();
+        arr_tmp_sites = tmp_sites.split(",");        
 
-    arr_new_feed.push(maxNewsToShow);
 
-    arr_tmp_feed.forEach(site => { 
-        if(!site.startsWith("https://")) {
-            site = site.startsWith("http") ? site.replace("http", "https") : "https://" + site
+    (async function() {
+		for await (let tmp_site of arr_tmp_sites) {
+            if(!tmp_site.startsWith("https://")) {
+                tmp_site = tmp_site.startsWith("http") ? tmp_site.replace("http", "https") : "https://" + tmp_site
+            }
+            var tmp_rss_site = await getRSS(tmp_site);
+
+            if (tmp_rss_site == undefined) tmp_rss_site = tmp_site;
+            
+            arr_tmp_rss.push(tmp_rss_site);
         }
-        arr_new_feed.push(site);
-    })
 
-    arr_new_feed = arr_new_feed;
-
-    setCookie('gazeta_online', arr_new_feed);
+        store_sites = {"max_news_to_show": maxNewsToShow};
+        arr_tmp_sites.forEach((key, i) => store_sites[key] = arr_tmp_rss[i]);
+        localStorage.setItem('gazeta_online', JSON.stringify(store_sites));
+        location.reload();
+    })();
 }
+/**
+ * Get rss link
+ * If the page include "rss" or "feed" word, dont do anything
+ * If include the word "reddit", add to the site url the extension ".rss"
+ * If not, search in DOM site the meta tag "application/rss+xml"
+ * If not exist this meta, return with undefined
+ */
+async function getRSS(site) {
+	
+	try {
+		var tmp_rss_site;
+			
+		if (site.includes("rss") || site.includes("feed")) {			
+			tmp_rss_site = site;
+		} else if (site.includes("reddit.com/")) {
+			tmp_rss_site = site + ".rss";
+		} else {
+			site = !site.endsWith("/") ? site + "/" : site;
+			let reshtml = await fetchSites(site);
 
-function setCookie(key, value) {
-    var expires = new Date();
-    expires.setTime(expires.getTime() + (10 * 365 * 24 * 60 * 60));
-    document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-    location.reload();
+			// If site not exist, or invalid domain, or 404
+			if (reshtml == undefined) return;
+
+			let doc = DOMPARSER(reshtml, 'text/html');
+
+			// If not have rss link tag
+			if (doc.querySelector('link[type="application/rss+xml"]') == null) {
+				rssListStatus("error", site);
+				return "";
+			}
+				
+			var link = doc.querySelector('link[type="application/rss+xml"]').href;
+			tmp_rss_site = link.split(location.origin + "/");
+			tmp_rss_site = tmp_rss_site.length == 1 ? tmp_rss_site[0] : site + tmp_rss_site[1];
+        }
+
+		return tmp_rss_site;
+	} catch (error) {
+		return "";
+	}
+}
+/**
+ * Fetch sites and catch if errors
+ */
+async function fetchSites(site) {	
+	const response = await fetch(site).then(function(response) {
+		if (response.ok) {
+			return response.text()
+		} else {
+		console.log('Fetch problem with ' + site + " :: " + response.status);
+		}
+	})
+	.catch(function(error) {
+		console.log('Fetch problem with ' + site + " :: " + error.message);
+	})
+
+	return response;
 }
 </script>
 

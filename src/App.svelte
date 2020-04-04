@@ -1,27 +1,31 @@
 <script>
-import { onMount, afterUpdate, beforeUpdate, tick } from 'svelte'
+import { onMount, tick } from 'svelte'
 import Header from './Header.svelte'
 import Feed from './Feed.svelte'
 import NewFeed from './NewFeed.svelte'
-import Masonry from 'masonry-layout'
-
-const DOMPARSER = new DOMParser().parseFromString.bind(new DOMParser());
+import imagesLoaded from 'imagesloaded'
 
 $: feeds = [];
 $: catch_error = false;
+
 let rss_sites = [];
 let sites_list;
 let max_news_to_show = 1;
 let message = "Loading news feed...";
 
-const sites_cookies = (async () => {
-	const sites = await getCookie('gazeta_online');
-    return await sites;
+var masonryEvents = ['load', 'resize'];
+
+const DOMPARSER = new DOMParser().parseFromString.bind(new DOMParser());
+
+const store_sites = (async () => {	
+	var sites = localStorage.getItem('gazeta_online');
+		sites = JSON.parse(sites);
+	return await sites;
 })()
 
 onMount(async () => {
-	const sites = await sites_cookies;
-	
+	const sites = await store_sites;
+
 	// If no sites...
 	if(sites == null) {
 		message = "There is no site loaded yet. Put your favorite news sites below.";
@@ -29,72 +33,34 @@ onMount(async () => {
 	};
 
 	// If sites
-	max_news_to_show = sites.shift(); // remove and set first array item (n° news per feed)
-	sites_list = sites; // array without first item
+	max_news_to_show = sites.max_news_to_show; // remove and set first array item (n° news per feed)
+	delete sites.max_news_to_show;
+	const sites_rss = Object.values(sites);
+	sites_list = Object.keys(sites);
 
 	(async function() {
-		for await (let site of sites) {
-			const rss_site = await getRSS(site);
-			if (rss_site == undefined) continue // If no rss_site, jump to next site
-			const feed = await getFeed(rss_site, max_news_to_show);
+		for await (let site of sites_rss) {
+			const feed = await getFeed(site, max_news_to_show);
 			if (feed == undefined) continue // If no feed because rss site failed to fetch
 			feeds.push(feed);
-			rssListStatus("sucess", rss_site);
+			rssListStatus("sucess", site);
 		}
 		feeds = feeds;
+
+		await tick();
+		waitForImages();
 
 		// Fix issue https://github.com/agustinl/gazeta-online/issues/2
 		if (feeds == "") catch_error = true;
 	})();
 	
-});
-
-(function() {
-	console.log("listo el DOM")
-})();
-
-afterUpdate(async () => {
-	
-	resizeAllMasonryItems();
-	
 })
 
-async function getRSS(site) {
-	try {
-		var rss_site;
-			
-		if (site.includes("rss") || site.includes("feed")) {			
-			rss_site = site;
-		} else if (site.includes("reddit.com/")) {
-			rss_site = site + ".rss";
-		} else {
-			site = !site.endsWith("/") ? site + "/" : site;
-			let reshtml = await fetchSites(site);
-
-			// If site not exist, or invalid domain, or 404
-			if (reshtml == undefined) return;
-
-			let doc = DOMPARSER(reshtml, 'text/html');
-
-			// If not have rss link tag
-			if (doc.querySelector('link[type="application/rss+xml"]') == null) {
-				rssListStatus("error", site);
-				return undefined;
-			}
-				
-			var link = doc.querySelector('link[type="application/rss+xml"]').href;
-			rss_site = link.split(location.origin + "/");
-			rss_site = rss_site.length == 1 ? rss_site[0] : site + rss_site[1];
-		}
-
-		return rss_site;
-	} catch (error) {
-		rssListStatus("error", site);
-		/*throw "Type 1 ++ " + error;*/
-	}
-}
-
+/**
+ * Get info from XML
+ */
 async function getFeed(rss_site, max_news_to_show) {
+	
 	try {
 		var date = new Date().getFullYear();
 		var articles = [];
@@ -180,8 +146,10 @@ async function getFeed(rss_site, max_news_to_show) {
 	}
 }
 
+/**
+ * Fetch sites and catch if errors
+ */
 async function fetchSites(site) {
-
 	const response = await fetch(site).then(function(response) {
 		if (response.ok) {
 			return response.text()
@@ -194,7 +162,6 @@ async function fetchSites(site) {
 	})
 
 	return response;
-
 }
 
 function resizeMasonryItem(item) {
@@ -223,8 +190,6 @@ function resizeMasonryItem(item) {
  *
  * Loop through all the items and apply the spanning to them using 
  * `resizeMasonryItem()` function.
- *
- * @uses resizeMasonryItem
  */
 function resizeAllMasonryItems() {
     // Get all item class objects in one list
@@ -239,11 +204,25 @@ function resizeAllMasonryItems() {
     }
 }
 
-function getCookie(key) {
-	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-	return keyValue ? keyValue[2].split(",") : null;
+/**
+ * Resize the items when all the images inside the masonry grid 
+ * finish loading. This will ensure that all the content inside our
+ * masonry items is visible.
+ */
+function waitForImages() {
+	var allItems = document.getElementsByClassName('feed');
+	for(var i=0;i<allItems.length;i++){
+		imagesLoaded(allItems[i], function( instance ) {
+			resizeAllMasonryItems()
+		});
+	}
 }
 
+/**
+ * Set a list of rss links with status
+ * SUCESS : if rss link works
+ * ERROR : if rss link doesnt work
+ */
 function rssListStatus(status, site) {
 	rss_sites.push({
 		status: status,
@@ -251,13 +230,16 @@ function rssListStatus(status, site) {
 	})
 	rss_sites = rss_sites;
 }
+
+masonryEvents.forEach(function(event) {
+  window.addEventListener(event, resizeAllMasonryItems);
+});
 </script>
 
-<main>
-	
+<main>	
 	<Header />
 
-	{#await sites_cookies}
+	{#await store_sites}
 		<img src="img/undraw_newspaper_k72w.svg" alt="" style="width: 300px;margin: 0 auto;display: block;">
 		<h2 class="feed-message">{message}</h2>
 	{:then sites}
@@ -280,10 +262,5 @@ function rssListStatus(status, site) {
 	{:catch error}
 		<img src="img/undraw_QA_engineers_dg5p.svg" alt="" style="width: 300px;margin: 0 auto 20px;display: block;">
 		<h2 class="feed-message">Ups!, an error occurred, try again in a few minutes</h2>
-	{/await}
-	
-	
+	{/await}	
 </main>
-
-<style>
-</style>
