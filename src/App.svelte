@@ -1,5 +1,5 @@
 <script>
-import { onMount, afterUpdate } from 'svelte'
+import { onMount, afterUpdate, beforeUpdate, tick } from 'svelte'
 import Header from './Header.svelte'
 import Feed from './Feed.svelte'
 import NewFeed from './NewFeed.svelte'
@@ -37,6 +37,7 @@ onMount(async () => {
 			const rss_site = await getRSS(site);
 			if (rss_site == undefined) continue // If no rss_site, jump to next site
 			const feed = await getFeed(rss_site, max_news_to_show);
+			if (feed == undefined) continue // If no feed because rss site failed to fetch
 			feeds.push(feed);
 			rssListStatus("sucess", rss_site);
 		}
@@ -46,18 +47,16 @@ onMount(async () => {
 		if (feeds == "") catch_error = true;
 	})();
 	
-})
+});
+
+(function() {
+	console.log("listo el DOM")
+})();
 
 afterUpdate(async () => {
-	window.addEventListener("DOMSubtreeModified", function () {
-		var elem = document.querySelector('.feeds');
-		if (elem) {
-			var msnry = new Masonry(elem, {
-				// options
-				itemSelector: '.feed'
-			});
-		}
-	});	
+	
+	resizeAllMasonryItems();
+	
 })
 
 async function getRSS(site) {
@@ -187,16 +186,57 @@ async function fetchSites(site) {
 		if (response.ok) {
 			return response.text()
 		} else {
-		console.log('Fetch problem with ' + site + " :: " + response.status);	
+		console.log('Fetch problem with ' + site + " :: " + response.status);
 		}
 	})
 	.catch(function(error) {
-		console.log('Fetch problem with ' + site + " :: " + error.message);		
-		rssListStatus("error", site);
+		console.log('Fetch problem with ' + site + " :: " + error.message);
 	})
 
 	return response;
 
+}
+
+function resizeMasonryItem(item) {
+    /* Get the grid object, its row-gap, and the size of its implicit rows */
+    var grid = document.getElementsByClassName('feeds')[0],
+        rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap')),
+        rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+
+    /*
+     * Spanning for any brick = S
+     * Grid's row-gap = G
+     * Size of grid's implicitly create row-track = R
+     * Height of item content = H
+     * Net height of the item = H1 = H + G
+     * Net height of the implicit row-track = T = G + R
+     * S = H1 / T
+     */
+    var rowSpan = Math.ceil((item.querySelector('.feed-content').getBoundingClientRect().height + rowGap) / (rowHeight + rowGap));
+
+    /* Set the spanning as calculated above (S) */
+    item.style.gridRowEnd = 'span ' + rowSpan;
+}
+
+/**
+ * Apply spanning to all the masonry items
+ *
+ * Loop through all the items and apply the spanning to them using 
+ * `resizeMasonryItem()` function.
+ *
+ * @uses resizeMasonryItem
+ */
+function resizeAllMasonryItems() {
+    // Get all item class objects in one list
+    var allItems = document.getElementsByClassName('feed');
+
+    /*
+     * Loop through the above list and execute the spanning function to
+     * each list-item (i.e. each masonry item)
+     */
+    for (var i = 0; i < allItems.length; i++) {
+        resizeMasonryItem(allItems[i]);
+    }
 }
 
 function getCookie(key) {
@@ -213,7 +253,7 @@ function rssListStatus(status, site) {
 }
 </script>
 
-<main id="feed">
+<main>
 	
 	<Header />
 

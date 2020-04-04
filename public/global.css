@@ -1,5 +1,4 @@
 @import url('https://rsms.me/inter/inter.css');
-
 :root {
     --main-txt-color: #000;
     --margin-btm: 20px;
@@ -16,39 +15,53 @@ body {
     font-weight: 400;
     font-kerning: normal;
     background: #fafafa;
-    margin:0;
 }
 
 a {
     color: var(--main-txt-color);
-    text-decoration:none;
+    text-decoration: none;
 }
 
-a:hover {    
-    color:#F03009;
+a:hover {
+    color: #F03009;
 }
 
-#feed .article-info a {
-    font-weight:bold;
+.feed-content .article-info a {
+    font-weight: bold;
 }
 
-#feed > header h1 {
-    text-align:center;
+main > header {
+    margin-bottom: 40px;
+}
+
+main > header h1 {
+    text-align: center;
     font-weight: 700;
     font-size: 4rem;
     letter-spacing: -0.07em;
 }
 
-.sub-header {
+main .sub-header {
     border-top: solid 1px var(--main-txt-color);
     border-bottom: solid 3px var(--main-txt-color);
     padding: 10px 0;
     margin: var(--margin-btm) 0;
 }
 
-.sub-header p {
+main .sub-header p {
     text-align: center;
-    margin: 0;    
+    margin: 0;
+}
+
+.feeds {
+    display: grid;
+    grid-gap: 1.5em;
+    grid-template-columns: repeat(auto-fill, minmax(18%, 1fr));
+    grid-auto-rows: 0;
+}
+
+.feed {
+    margin-bottom: var(--margin-btm);
 }
 
 .feed-header h2,
@@ -58,7 +71,7 @@ a:hover {
 }
 
 .feed-message {
-    text-align:center;
+    text-align: center;
 }
 
 .feed-header {
@@ -77,7 +90,7 @@ a:hover {
 
 .feed-header p {
     width: 100%;
-    color: #868686; 
+    color: #868686;
 }
 
 .feed-header .icon-tabler {
@@ -86,99 +99,95 @@ a:hover {
     stroke-width: 3;
 }
 
-.feed {
-    overflow:hidden;
-}
-
-.feed > article {
+.feed-content > article {
     border: solid 1px var(--main-txt-color);
     border-bottom: solid 2px var(--main-txt-color);
     padding: 20px 10px;
     margin-bottom: var(--margin-btm);
 }
 
-.feed > article h3 {
+.feed-content > article h3 {
     margin: 0;
 }
 
 .categories {
-    margin:0 0 var(--margin-btm) 0;
-    padding:0;
-
-    display:flex;
-    flex-wrap:wrap;
+    margin: 0 0 var(--margin-btm) 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .categories mark {
     font-size: .9em;
-    list-style:none;
-    font-weight:400;
+    list-style: none;
+    font-weight: 400;
     margin: 0px 5px 5px 0;
     padding: 2px 5px;
 }
 
-article img {
-    display:block;
+.article-info img {
+    display: block;
     max-width: 100%;
     height: auto;
     margin: 0 auto 10px;
 }
 
-article iframe {
+.article-info iframe {
     max-width: 100%;
     margin-bottom: 10px;
 }
 
 .article-info blockquote {
     width: 100%;
-    border-left:solid 4px #CCC;
-    margin:0;
-    padding:0 0 0 10px;
+    border-left: solid 4px #CCC;
+    margin: 0;
+    padding: 0 0 0 10px;
 }
 
 .article-info figure {
     width: 100%;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 .article-info pre {
-    background:#FAFAFA;
+    background: #FAFAFA;
     border: solid 1px #CCC;
     padding: 10px;
-    overflow:auto;
+    overflow: auto;
 }
 
 .article-info > p {
     max-height: 750px;
-    overflow-y:auto;
+    overflow-y: auto;
 }
 
-.feed > article time {
+.feed-content > article time {
     font-size: .9em;
     color: #868686;
 }
 
 #new-feed {
-    display:flex;
-    flex-direction:row;
-    align-items:flex-start;
-    justify-content:center;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
     border-top: solid 3px var(--main-txt-color);
     padding: var(--margin-btm) 0;
-    margin: var(--margin-btm) 0 0;    
+    margin: var(--margin-btm) 0 0;
 }
 
 #new-feed div:first-child {
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
 }
 
 #new-feed div:first-child > div {
-    display:flex;
-    flex-direction:row;
-    justify-content:space-between;
-    align-items:center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--margin-btm);
 }
 
 #new-feed div:first-child > div p {
@@ -191,20 +200,20 @@ article iframe {
     padding: 5px;
     border: none;
     border-bottom: solid 2px var(--main-txt-color);
-    background:transparent;
-    text-align:center;
+    background: transparent;
+    text-align: center;
     width: 60px;
 }
 
 #new-feed .feeds-list {
-    margin: var(--margin-btm) 0;
-    padding:0;
+    padding: 0;
+    margin: 0;
 }
 
 #new-feed .feeds-list li {
-    display:flex;
-    list-style:none;
-    font-size:.9em;
+    display: flex;
+    list-style: none;
+    font-size: .9em;
     word-break: break-all;
 }
 
@@ -219,44 +228,37 @@ article iframe {
 }
 
 #new-feed .feeds-list li svg {
-    width:18px;
-    margin-right:5px;
+    width: 18px;
+    margin-right: 5px;
 }
 
 textarea {
-    display:block;
-    margin:0 auto;
+    display: block;
+    margin: 0 auto;
     padding: 5px;
     width: 700px;
     height: 100px;
     border: solid 1px var(--main-txt-color);
     border-bottom: solid 2px var(--main-txt-color);
-    /* margin-bottom:var(--margin-btm); */
-    resize:vertical;
+    margin-bottom:var(--margin-btm);
+    resize: vertical;
 }
 
-button {    
+button {
     font: 15px/22px 'Inter', system-ui, sans-serif;
-    cursor:pointer;
-    border:none;
+    cursor: pointer;
+    border: none;
     font-weight: 600;
-
     padding: 5px var(--margin-btm);
 }
 
 footer {
-    text-align:center;
+    text-align: center;
 }
 
 footer h4,
 footer h5 {
     margin: 10px 0;
-}
-
-.feeds > section {
-    max-width: 18%;
-    width: 18%;
-    margin: 0 1% 20px;
 }
 
 @media only screen and (max-width: 1600px) {
@@ -268,9 +270,8 @@ footer h5 {
 
 @media only screen and (max-width: 1280px) {
     textarea {
-        width:500px;
+        width: 500px;
     }
-
     .feeds > section {
         max-width: 31%;
         margin: 0 1% 20px;
@@ -281,15 +282,12 @@ footer h5 {
     #new-feed > div {
         padding: 10px;
     }
-
     #new-feed .feeds-list {
         padding: 0;
     }
-
     textarea {
         width: 100%;
     }
-
     .feeds > section {
         max-width: 48%;
         margin: 0 1% 20px;
@@ -298,9 +296,8 @@ footer h5 {
 
 @media only screen and (max-width: 680px) {
     #new-feed {
-        flex-wrap:wrap;
+        flex-wrap: wrap;
     }
-
     #new-feed > div {
         padding: 10px;
         width: 100%;
@@ -308,19 +305,16 @@ footer h5 {
 }
 
 @media only screen and (max-width: 590px) {
-    #feed > header h1 {
-        font-size:3em;
+    main > header h1 {
+        font-size: 3em;
     }
-
     #new-feed div:first-child > div {
-        flex-direction:column;
-        align-items:flex-start;
+        flex-direction: column;
+        align-items: flex-start;
     }
-    
     button {
-        margin-top:20px;
+        margin-top: 20px;
     }
-
     .feeds > section {
         max-width: 96%;
         margin: 0 2% 20px;
@@ -329,6 +323,6 @@ footer h5 {
 
 @media only screen and (max-height: 500px) {
     .article-info > p {
-        max-height: 100vh; 
+        max-height: 100vh;
     }
 }
