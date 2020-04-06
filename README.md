@@ -4,6 +4,10 @@
 
 [https://gazeta-online.now.sh/](https://gazeta-online.now.sh/)
 
+```bash
+You are going to need an extension that enables [CORS](https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)
+```
+
 ## Author
 
 [Agustínl](https://www.agustinl.dev/)
