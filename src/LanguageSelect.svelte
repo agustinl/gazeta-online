@@ -4,35 +4,42 @@
     export let setLanguage;
 
     const dispatch = createEventDispatcher();
-    let selected = setLanguage || ""
+    let selected = setLanguage[0] || ""
 
     function getSelectedLanguage() {
         dispatch('language', {
-			language: selected
+            id: selected.id == undefined ? "" : selected.id,
+            language: selected.language == undefined ? "" : selected.language
 		});
     }
+
+    let languages = [
+        {id: `ar`, language: `Arabic`},
+        {id: `de`, language: `German`},
+        {id: `en`, language: `English`},
+        {id: `es`, language: `Spanish`},
+        {id: `fr`, language: `French`},
+        {id: `he`, language: `Hebrew`},
+        {id: `it`, language: `Italian`},
+        {id: `nl`, language: `Dutch`},
+        {id: `no`, language: `Norwegian`},
+        {id: `pt`, language: `Portuguese`},
+        {id: `ru`, language: `Russian`},
+        {id: `se`, language: `Sami`},
+        /*{id: `ud`, language: `E`},*/
+        {id: `zh`, language: `Chinese`}
+    ]
 </script>
 
 <select bind:value={selected} on:change={getSelectedLanguage}>
     <option value="">Choose a <b>language</b> if you want...</option>
-    <option value="ar">ar</option>
-    <option value="de">de</option>
-    <option value="en">en</option>
-    <option value="es">es</option>
-    <option value="fr">fr</option>
-    <option value="he">he</option>
-    <option value="it">it</option>
-    <option value="nl">nl</option>
-    <option value="no">no</option>
-    <option value="pt">pt</option>
-    <option value="ru">ru</option>
-    <option value="se">se</option>
-    <option value="ud">ud</option>
-    <option value="zh">zh</option>
-</select>
+    {#if setLanguage[0]}
+        <option value={setLanguage[0]}>{setLanguage[1]}</option>
+    {/if}
 
-<style>
-select {
-    margin-top:20px;
-}
-</style>
+    {#each languages as language}
+		<option value={language}>
+			{language.language}
+		</option>
+	{/each}
+</select>

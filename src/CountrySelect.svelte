@@ -4,75 +4,82 @@
     export let setCountry;
 
     const dispatch = createEventDispatcher();
-    let selected = setCountry || ""
+    let selected = setCountry[0] || ""
 
     function getSelectedCountry() {
         dispatch('country', {
-			country: selected
+            id: selected.id == undefined ? "" : selected.id,
+            country: selected.country == undefined ? "" : selected.country
 		});
     }
+
+    let countries = [
+        {id: `ar`, country: `Argentina`},
+        {id: `au`, country: `Australia`},
+        {id: `at`, country: `Austria`},
+        {id: `be`, country: `Belgium`},
+        {id: `br`, country: `Brazil`},
+        {id: `bg`, country: `Bulgaria`},
+        {id: `ca`, country: `Canada`},
+        {id: `cn`, country: `China`},
+        {id: `co`, country: `Colombia`},
+        {id: `cu`, country: `Cuba`},
+        {id: `cz`, country: `Czech Republic`},
+        {id: `eg`, country: `Egypt`},
+        {id: `fr`, country: `France`},
+        {id: `de`, country: `Germany`},
+        {id: `gr`, country: `Greece`},
+        {id: `hk`, country: `Hong Kong`},
+        {id: `hu`, country: `Hungary`},
+        {id: `in`, country: `India`},
+        {id: `id`, country: `Indonesia`},
+        {id: `ie`, country: `Ireland`},
+        {id: `il`, country: `Israel`},
+        {id: `it`, country: `Italy`},
+        {id: `jp`, country: `Japan`},
+        {id: `lv`, country: `Latvia`},
+        {id: `lt`, country: `Lithuania`},
+        {id: `my`, country: `Malaysia`},
+        {id: `mx`, country: `Mexico`},
+        {id: `ma`, country: `Morocco`},
+        {id: `nl`, country: `Netherlands`},
+        {id: `nz`, country: `New Zealand`},
+        {id: `ng`, country: `Nigeria`},
+        {id: `no`, country: `Norway`},
+        {id: `ph`, country: `Philippines`},
+        {id: `pl`, country: `Poland`},
+        {id: `pt`, country: `Portugal`},
+        {id: `ro`, country: `Romania`},
+        {id: `ru`, country: `Russia`},
+        {id: `sa`, country: `Saudi Arabia`},
+        {id: `rs`, country: `Serbia`},
+        {id: `sg`, country: `Singapore`},
+        {id: `sk`, country: `Slovakia`},
+        {id: `si`, country: `Slovenia`},
+        {id: `za`, country: `South Africa`},
+        {id: `kr`, country: `South Korea`},
+        {id: `se`, country: `Sweden`},
+        {id: `ch`, country: `Switzerland`},
+        {id: `tw`, country: `Taiwan`},
+        {id: `th`, country: `Thailand`},
+        {id: `tr`, country: `Turkey`},
+        {id: `ae`, country: `UAE`},
+        {id: `ua`, country: `Ukraine`},
+        {id: `gb`, country: `United Kingdom`},
+        {id: `us`, country: `United States`},
+        {id: `ve`, country: `Venezuela`}
+    ];
 </script>
 
 <select bind:value={selected} on:change={getSelectedCountry}>
     <option value="">Choose a country if you want...</option>
-    <option value="ar">Argentina</option>
-    <option value="au">Australia</option>
-    <option value="at">Austria</option>
-    <option value="be">Belgium</option>
-    <option value="br">Brazil</option>
-    <option value="bg">Bulgaria</option>
-    <option value="ca">Canada</option>
-    <option value="cn">China</option>
-    <option value="co">Colombia</option>
-    <option value="cu">Cuba</option>
-    <option value="cz">Czech Republic</option>
-    <option value="eg">Egypt</option>
-    <option value="fr">France</option>
-    <option value="de">Germany</option>
-    <option value="gr">Greece</option>
-    <option value="hk">Hong Kong</option>
-    <option value="hu">Hungary</option>
-    <option value="in">India</option>
-    <option value="id">Indonesia</option>
-    <option value="ie">Ireland</option>
-    <option value="il">Israel</option>
-    <option value="it">Italy</option>
-    <option value="jp">Japan</option>
-    <option value="lv">Latvia</option>
-    <option value="lt">Lithuania</option>
-    <option value="my">Malaysia</option>
-    <option value="mx">Mexico</option>
-    <option value="ma">Morocco</option>
-    <option value="nl">Netherlands</option>
-    <option value="nz">New Zealand</option>
-    <option value="ng">Nigeria</option>
-    <option value="no">Norway</option>
-    <option value="ph">Philippines</option>
-    <option value="pl">Poland</option>
-    <option value="pt">Portugal</option>
-    <option value="ro">Romania</option>
-    <option value="ru">Russia</option>
-    <option value="sa">Saudi Arabia</option>
-    <option value="rs">Serbia</option>
-    <option value="sg">Singapore</option>
-    <option value="sk">Slovakia</option>
-    <option value="si">Slovenia</option>
-    <option value="za">South Africa</option>
-    <option value="kr">South Korea</option>
-    <option value="se">Sweden</option>
-    <option value="ch">Switzerland</option>
-    <option value="tw">Taiwan</option>
-    <option value="th">Thailand</option>
-    <option value="tr">Turkey</option>
-    <option value="ae">UAE</option>
-    <option value="ua">Ukraine</option>
-    <option value="gb">United Kingdom</option>
-    <option value="us">United States</option>
-    <option value="ve">Venezuela</option>
-</select>
+    {#if setCountry[0]}
+        <option value={setCountry[0]}>{setCountry[1]}</option>
+    {/if}
 
-<style>
-select {
-    margin-top:20px;
-}
-</style>
+    {#each countries as country}
+		<option value={country}>
+			{country.country}
+		</option>
+	{/each}
+</select>

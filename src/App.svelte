@@ -3,33 +3,37 @@
     import Header from './Header.svelte'
     import Article from './Article.svelte'
     import NewFeed from './NewFeed.svelte'
+    import Footer from './Footer.svelte'
 
     let sites;
     let storedSites;
+    let showingNewsMessage = "";
     $: feedMessage = "There is no site loaded yet. Put your favorite news sites below."
     $: articles = [];
 
     onMount(async () => {
+        
         if (sites == null) return;
 
-        if(sites.category || sites.country) {
-            var url = `https://newsapi.org/v2/top-headlines?pageSize=${sites.max_news_to_show}&country=${sites.country}&category=${sites.category}&apiKey=b3408247a56444d5b1f87b48f5e69165`
+        if(sites.category[0] || sites.country[0]) {
+            var url = `https://newsapi.org/v2/top-headlines?pageSize=${sites.max_news_to_show}&country=${sites.country[0]}&category=${sites.category[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
         } else {
-            var url = `https://newsapi.org/v2/everything?pageSize=${sites.max_news_to_show}&domains=${sites.news_list}&language=${sites.language}&apiKey=b3408247a56444d5b1f87b48f5e69165`
+            var url = `https://newsapi.org/v2/everything?pageSize=${sites.max_news_to_show}&domains=${sites.news_list}&language=${sites.language[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
 
-        }
+        }        
         
         var req = new Request(url);
         
-        /*articles = await fetch(req).then(function(response) {
+        articles = await fetch(req).then(function(response) {
             return response.json()
         })
         .catch(function(error) {
             console.log('Hubo un problema con la petición Fetch:' + error.message);
-        });*/
+        });
 
         if(articles.status == "ok" && articles.totalResults > 0) {
             articles = articles.articles;
+            showingNewsMessage = setShowingNewsMessage(sites.category[1], sites.country[1], sites.max_news_to_show, sites.news_list, sites.language[1]);
         } else if (articles.status == "ok" && articles.totalResults === 0) {
             feedMessage = `We were unable to load your news feed. Maybe the sites you placed are not available. Try others, there is a lot`;
         } else if (articles.status == "error") {
@@ -41,9 +45,35 @@
         sites = localStorage.getItem('gazeta_online');
         sites = JSON.parse(sites);
     });
+
+    function setShowingNewsMessage(category, country, max_news_to_show, news, language) {
+
+        var message;
+
+        if(category && country) {
+            message = `Showing <strong>${country}</strong> news about <strong>${category}</strong>`
+        } else if (category) {
+            message = `Showing <strong>${category}</strong> news`
+        } else if (country) {            
+            message = `Showing news from <strong>${country}</strong>`
+        } else if (news && language) {
+            message = `Showing news from <strong>${news}</strong> in <strong>${language}</strong>`
+        } else if (news) {
+            message = `Showing news from <strong>${news}</strong>`
+        } else {
+            message = `Showing news in <strong>${language}</strong>`
+        }
+        return message;
+    }
 </script>
 
 <Header />
+
+{#if showingNewsMessage}
+    <div class="watching-news-from">
+        <h3>{@html showingNewsMessage}</h3>
+    </div>
+{/if}
 
 <main>
 
@@ -61,6 +91,8 @@
 
 <NewFeed sitesList={sites} />
 
+<Footer />
+
 <style>
 main {
     display: flex;
@@ -71,5 +103,11 @@ main {
     width:100%;
     text-align:center;
     font-weight:600;
+    padding: 50px 20px;
+}
+
+.watching-news-from {
+    padding: 50px 20px;
+    text-align:center;
 }
 </style>

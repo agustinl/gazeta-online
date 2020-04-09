@@ -17,6 +17,7 @@ body {
 	line-height: 1.5;
     color: #000;
     background: #fafafa;
+    margin: 0;
 }
 
 /*
@@ -67,8 +68,10 @@ input {
     color: #000;
     border-radius: 3px;    
     border: solid 1px #e2e2e2;
+    margin-bottom:20px;
 }
 
+input,
 select {
     padding: 10px 10px;
 }

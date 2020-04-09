@@ -21,7 +21,7 @@ header {
     align-items:center;
     justify-content:center;
 
-    padding: 100px 0;
+    padding: 100px 0 0;
 }
 
 .sub-title {

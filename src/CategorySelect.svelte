@@ -1,31 +1,38 @@
 <script>
     import { createEventDispatcher } from 'svelte';
     
-    export let setCategory;
+    export let setCategory;    
 
     const dispatch = createEventDispatcher();
-    let selected = setCategory || ""
+    let selected = setCategory[0] || ""
 
     function getSelectedCategory() {
         dispatch('category', {
-			category: selected
+            id: selected.id == undefined ? "" : selected.id,
+            category: selected.category == undefined ? "" : selected.category
 		});
     }
+
+    let categories = [
+        {id: `general`, category: `General`},
+        {id: `business`, category: `Business`},
+        {id: `entertainment`, category: `Entertainment`},
+        {id: `health`, category: `Health`},
+        {id: `science`, category: `Science`},
+        {id: `sports`, category: `Sports`},
+        {id: `Technology`, category: `Technology`}
+    ]
 </script>
 
 <select bind:value={selected} on:change={getSelectedCategory}>
     <option value="">Choose a <b>category</b> if you want...</option>
-    <option value="general">General</option>
-    <option value="business">Business</option>
-    <option value="entertainment">Entertainment</option>
-    <option value="health">Health</option>
-    <option value="science">Science</option>
-    <option value="sports">Sports</option>
-    <option value="Technology">Technology</option>
-</select>
+    {#if setCategory[0]}
+        <option value={setCategory[0]}>{setCategory[1]}</option>
+    {/if}
 
-<style>
-select {
-    margin-top:20px;
-}
-</style>
+    {#each categories as category}
+		<option value={category}>
+			{category.category}
+		</option>
+	{/each}
+</select>

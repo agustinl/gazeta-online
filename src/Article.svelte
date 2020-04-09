@@ -26,13 +26,15 @@
 
     <h3>{news.title}</h3>
     {#if news.description}
-        <p class="short-description">{news.description}</p>
+        <p class="short-description">{@html news.description}</p>
     {/if}
 
-    <img src={news.urlToImage} alt={name}>
+    {#if news.urlToImage}
+        <img src={news.urlToImage} alt={name}>
+    {/if}
 
     {#if news.content}
-        <p>{content} <a href={news.url} target="_blank" rel="noopener">Read more</a></p>
+        <p>{@html content} <a href={news.url} target="_blank" rel="noopener">Read more</a></p>
     {/if}
         
 
@@ -53,12 +55,14 @@ h4 {
 
 p {
     font-size: 16px;
+    word-break: break-word;
 }
 
 p.short-description {
     font-size: 14px;
     color: #888;
     font-weight: 400;
+    word-break: break-word;
 }
 
 .news-head {

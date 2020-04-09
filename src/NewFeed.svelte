@@ -7,9 +7,9 @@
 
     let newsList;
     let newsNumber = 1;
-    let storeCountry;
-    let storeCategory;
-    let storeLanguage;
+    let storeCountry = [];
+    let storeCategory = [];
+    let storeLanguage = [];
 
     if(sitesList != null) {
         newsList        = sitesList.news_list;
@@ -28,22 +28,23 @@
     }
 
     function countrySelected(event) {
-        storeCountry = event.detail.country;
+        storeCountry = [event.detail.id, event.detail.country];
     }
 
     function categorySelected(event) {
-        storeCategory = event.detail.category;
+        storeCategory = [event.detail.id, event.detail.category];
     }
 
     function languageSelected(event) {
-        storeLanguage = event.detail.language;
+        storeLanguage = [event.detail.id, event.detail.language];
     }
 </script>
 
 <section id="new-feed">
 
     <div class="new-feed-box">
-        <textarea name="news-list" id="news-list" bind:value={newsList} placeholder="Put your favorite websites separated by a comma (eg. https://www.theverge.com/, https://www.wired.com/)"></textarea>
+        <!-- <input type="text"> -->
+        <textarea name="news-list" id="news-list" bind:value={newsList} placeholder="Put your favorite websites separated by a comma (eg. theverge.com,wired.com)"></textarea>
         <LanguageSelect on:language={languageSelected} setLanguage={storeLanguage} />
         <CountrySelect on:country={countrySelected} setCountry={storeCountry} />
         <CategorySelect on:category={categorySelected} setCategory={storeCategory} />
@@ -72,9 +73,14 @@
     align-self:flex-end;
 }
 
+.new-feed-box p {
+    margin:0;
+}
+
 textarea {
     width: 100%;
-    height: 200px;
+    height: 100px;
+    resize: vertical;
     padding: 10px 5px;
 }
 
