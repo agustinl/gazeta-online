@@ -44,8 +44,11 @@
 
     <div class="new-feed-box">
         <!-- <input type="text"> -->
-        <textarea name="news-list" id="news-list" bind:value={newsList} placeholder="Put your favorite websites separated by a comma (eg. theverge.com,wired.com)"></textarea>
+        <textarea name="news-list" id="news-list" bind:value={newsList} placeholder="Your favorite news sources separated by commas (eg. theverge.com,wired.com)"></textarea>
         <LanguageSelect on:language={languageSelected} setLanguage={storeLanguage} />
+        <div class="separator">
+            <span></span> <p>or</p> <span></span>
+        </div>
         <CountrySelect on:country={countrySelected} setCountry={storeCountry} />
         <CategorySelect on:category={categorySelected} setCategory={storeCategory} />
         <p>I want to see <input type="number" id="news-number" name="news-number" bind:value={newsNumber} min="1" max="100"> news per feed</p>
@@ -86,6 +89,23 @@ textarea {
 
 #news-number {
     padding: 5px;
+}
+
+.separator {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.separator span {
+    flex-grow:1;
+    height:1px;
+    background:#000;
+}
+
+.separator p {
+    padding:0px 10px;
 }
 
 @media only screen and (max-width:1700px) {

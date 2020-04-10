@@ -4,7 +4,7 @@
     export let setCountry;
 
     const dispatch = createEventDispatcher();
-    let selected = setCountry[0] || ""
+    let selected = setCountry[0] || "";
 
     function getSelectedCountry() {
         dispatch('country', {
@@ -72,7 +72,7 @@
 </script>
 
 <select bind:value={selected} on:change={getSelectedCountry}>
-    <option value="">Choose a country if you want...</option>
+    <option>Country news</option>
     {#if setCountry[0]}
         <option value={setCountry[0]}>{setCountry[1]}</option>
     {/if}

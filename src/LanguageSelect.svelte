@@ -4,7 +4,7 @@
     export let setLanguage;
 
     const dispatch = createEventDispatcher();
-    let selected = setLanguage[0] || ""
+    let selected = setLanguage[0] || "";
 
     function getSelectedLanguage() {
         dispatch('language', {
@@ -32,7 +32,7 @@
 </script>
 
 <select bind:value={selected} on:change={getSelectedLanguage}>
-    <option value="">Choose a <b>language</b> if you want...</option>
+    <option>Language of the sources</option>
     {#if setLanguage[0]}
         <option value={setLanguage[0]}>{setLanguage[1]}</option>
     {/if}

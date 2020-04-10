@@ -4,7 +4,7 @@
     export let setCategory;    
 
     const dispatch = createEventDispatcher();
-    let selected = setCategory[0] || ""
+    let selected = setCategory[0] || "";
 
     function getSelectedCategory() {
         dispatch('category', {
@@ -25,7 +25,7 @@
 </script>
 
 <select bind:value={selected} on:change={getSelectedCategory}>
-    <option value="">Choose a <b>category</b> if you want...</option>
+    <option>News category</option>
     {#if setCategory[0]}
         <option value={setCategory[0]}>{setCategory[1]}</option>
     {/if}
