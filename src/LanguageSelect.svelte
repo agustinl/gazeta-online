@@ -3,7 +3,7 @@
     
     export let setLanguage;
 
-    const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher();    
     let selected = setLanguage[0] || "";
 
     function getSelectedLanguage() {
