@@ -1,5 +1,5 @@
 <script>
-    import { onMount, beforeUpdate, afterUpdate } from 'svelte';
+    import { onMount, beforeUpdate } from 'svelte';
     import Header from './Header.svelte'
     import Article from './Article.svelte'
     import NewFeed from './NewFeed.svelte'
@@ -8,23 +8,39 @@
     let sites;
     let storedSites;
     let showingNewsMessage = "";
-    $: feedMessage = "There is no site loaded yet. Put your favorite news sites below."
+    $: feedMessage = "There is no site loaded yet. Put your favorite news sites below."    
     $: articles = [];
 
     onMount(async () => {
         if (sites == null) return;
 
-        if(sites.news_list) {
-            var url = `https://newsapi.org/v2/everything?pageSize=${sites.max_news_to_show}&domains=${sites.news_list}&language=${sites.language[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
-        } else if(sites.category[0] || sites.country[0]) {
+        console.log(sites)
+
+        if(sites.category[0] || sites.country[0]) {
             var url = `https://newsapi.org/v2/top-headlines?pageSize=${sites.max_news_to_show}&country=${sites.country[0]}&category=${sites.category[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
+        } else if(sites.news_list) {
+            var url = `https://newsapi.org/v2/everything?pageSize=${sites.max_news_to_show}&domains=${sites.news_list}&language=${sites.language[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
         } else if (sites.language[0] && !sites.news_list) {
             feedMessage = 'To choose a language, it is necessary to place your news sources';
             return;
         }
         
-        var req = new Request(url);
+        var req = new Request(url);        
         
+        feedMessage = `<div class="sk-cube-grid">
+        <div class="sk-cube sk-cube1"></div>
+        <div class="sk-cube sk-cube2"></div>
+        <div class="sk-cube sk-cube3"></div>
+        <div class="sk-cube sk-cube4"></div>
+        <div class="sk-cube sk-cube5"></div>
+        <div class="sk-cube sk-cube6"></div>
+        <div class="sk-cube sk-cube7"></div>
+        <div class="sk-cube sk-cube8"></div>
+        <div class="sk-cube sk-cube9"></div>
+        </div> Loading news...`
+
+        console.log(feedMessage)
+
         articles = await fetch(req).then(function(response) {
             return response.json()
         })
@@ -84,7 +100,7 @@
         {/each}
     {:else}
         <div class="feed-messages">
-            {feedMessage}
+            {@html feedMessage}
         </div>
     {/if}
 
@@ -104,7 +120,7 @@ main {
     width:100%;
     text-align:center;
     font-weight:600;
-    padding: 50px 20px;
+    padding: 100px 20px 0;
 }
 
 .watching-news-from {

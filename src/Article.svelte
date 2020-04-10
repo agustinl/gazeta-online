@@ -21,7 +21,7 @@
                 <path d="M4 4a16 16 0 0 1 16 16" />
                 <path d="M4 11a9 9 0 0 1 9 9" />
             </svg>{name}</h4>
-        <pubDate>{moment(`${news.publishedAt}`).format('MMMM Do, YYYY')}</pubDate>
+        <pubDate>{moment(`${news.publishedAt}`).format('MMMM D, YYYY')}</pubDate>
     </div>
 
     <h3>{news.title}</h3>

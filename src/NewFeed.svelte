@@ -38,6 +38,14 @@
     function languageSelected(event) {
         storeLanguage = [event.detail.id, event.detail.language];
     }
+
+    function reset() {
+        newsList        = "";
+        newsNumber      = 1;
+        storeCountry    = "";
+        storeCategory   = "";
+        storeLanguage   = "";
+    }
 </script>
 
 <section id="new-feed">
@@ -52,7 +60,11 @@
         <CountrySelect on:country={countrySelected} setCountry={storeCountry} />
         <CategorySelect on:category={categorySelected} setCategory={storeCategory} />
         <p>I want to see <input type="number" id="news-number" name="news-number" bind:value={newsNumber} min="1" max="100"> news per feed</p>
-        <a href="#" class="btn" on:click={setNewsList}>Set new feed</a>        
+        
+        <div class="btns">
+            <button class="btn-reset" on:click={reset}>Reset</button>
+            <button class="btn" on:click={setNewsList}>Set new feed</button>        
+        </div>
     </div>
 
 </section>
@@ -71,12 +83,23 @@
     flex-direction:column;
 }
 
-.new-feed-box .btn {
+.new-feed-box .btns {
     display:flex;
-    align-self:flex-end;
+    justify-content:flex-end;
+}
+
+.btn-reset {
+    border:none;
+    background:none;
+    color: #808080;
+    margin: 10px 30px;
+    font-size:14px;
+    text-transform:uppercase;
+    font-weight:bold;
 }
 
 .new-feed-box p {
+    font-size:14px;
     margin:0;
 }
 
