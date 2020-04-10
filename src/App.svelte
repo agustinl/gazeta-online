@@ -14,8 +14,6 @@
     onMount(async () => {
         if (sites == null) return;
 
-        console.log(sites)
-
         if(sites.category[0] || sites.country[0]) {
             var url = `https://newsapi.org/v2/top-headlines?pageSize=${sites.max_news_to_show}&country=${sites.country[0]}&category=${sites.category[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
         } else if(sites.news_list) {
