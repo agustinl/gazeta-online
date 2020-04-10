@@ -15,9 +15,9 @@
         if (sites == null) return;
 
         if(sites.category[0] || sites.country[0]) {
-            var url = `https://newsapi.org/v2/top-headlines?pageSize=${sites.max_news_to_show}&country=${sites.country[0]}&category=${sites.category[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
+            var url = `https://newsapi.org/v2/top-headlines?pageSize=${sites.max_news_to_show}&country=${sites.country[0]}&category=${sites.category[0]}&apiKey=API_KEY`
         } else if(sites.news_list) {
-            var url = `https://newsapi.org/v2/everything?pageSize=${sites.max_news_to_show}&domains=${sites.news_list}&language=${sites.language[0]}&apiKey=b3408247a56444d5b1f87b48f5e69165`
+            var url = `https://newsapi.org/v2/everything?pageSize=${sites.max_news_to_show}&domains=${sites.news_list}&language=${sites.language[0]}&apiKey=API_KEY`
         } else if (sites.language[0] && !sites.news_list) {
             feedMessage = 'To choose a language, it is necessary to place your news sources';
             return;
