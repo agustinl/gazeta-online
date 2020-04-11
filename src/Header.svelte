@@ -7,7 +7,7 @@
         <h1>Gazeta online</h1>
     </div>
     <div class="sub-title">
-        <h2>Free news reader. All in one place.</h2>
+        <h2>Free news reader.</h2>
         <time>{moment().format('dddd, MMMM Do, YYYY')}</time>
     </div>
     <div class="nav">

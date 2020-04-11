@@ -1,6 +1,6 @@
 {
   "name": "gazeta-online",
-  "description": "Free news reader. All in one place.",
+  "description": "Free news reader.",
   "version": "2.0.0",
   "scripts": {
     "build": "rollup -c",
