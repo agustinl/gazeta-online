@@ -108,8 +108,11 @@
 
 <style>
 main {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap:wrap;
+    -ms-flex-wrap:wrap;
+        flex-wrap:wrap;
 }
 
 .feed-messages {

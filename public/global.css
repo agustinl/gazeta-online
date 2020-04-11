@@ -1,5 +1,8 @@
+/* prefixed by https://autoprefixer.github.io (PostCSS: v7.0.26, autoprefixer: v9.7.3) */
+
 * {
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
 
 html,
@@ -52,11 +55,16 @@ a:visited {
     text-transform:uppercase;
     font-weight:bold;
 
+    -webkit-transition:.2s;
+
+    -o-transition:.2s;
+
     transition:.2s; 
 }
 
 .btn:hover {
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
 }
 
 button {
@@ -87,7 +95,8 @@ textarea:hover,
 textarea:focus,
 select:hover,
 input:hover {
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
 }
 
 .sk-cube-grid {

@@ -49,8 +49,12 @@ h3 {
 h4 {
     font-weight: 600;
     line-height:1;
+    display:-webkit-box;
+    display:-ms-flexbox;
     display:flex;
-    align-items:center;
+    -webkit-box-align:center;
+        -ms-flex-align:center;
+            align-items:center;
 }
 
 p {
@@ -66,9 +70,15 @@ p.short-description {
 }
 
 .news-head {
+    display:-webkit-box;
+    display:-ms-flexbox;
     display:flex;
-    align-items:center;
-    justify-content:space-between;
+    -webkit-box-align:center;
+        -ms-flex-align:center;
+            align-items:center;
+    -webkit-box-pack:justify;
+        -ms-flex-pack:justify;
+            justify-content:space-between;
     margin-bottom: 20px;
 }
 
@@ -81,7 +91,8 @@ article {
     margin: 1%;
     padding: 20px 20px 10px;
     border: solid 1px #e2e2e2;
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
     background: #FFF;
     border-radius: 3px;
     margin-bottom: 20px;

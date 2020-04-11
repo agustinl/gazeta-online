@@ -39,8 +39,9 @@ h2 {
     font-weight:300;
 }
 
-time {    
-    color: #888;
+time {
+    color: #000;
+    font-weight: bold;
 }
 
 @media only screen and (max-width: 820px) {
